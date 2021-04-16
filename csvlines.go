@@ -19,8 +19,15 @@ func New(filepath string) *CSVLines {
 	return &CSVLines{Path: filepath}
 }
 
-func (r *CSVLines) Init() {
-	file, e := os.OpenFile(r.Path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+func (r *CSVLines) Init(truncate bool) {
+	mode := os.O_WRONLY | os.O_CREATE
+	if truncate {
+		mode |= os.O_TRUNC
+	} else {
+		mode |= os.O_APPEND
+	}
+
+	file, e := os.OpenFile(r.Path, mode, 0644)
 	CheckError("OpenFile", e)
 
 	r.File = file
